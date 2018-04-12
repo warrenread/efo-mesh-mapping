@@ -1,0 +1,147 @@
+#+TITLE: EFO->MeSH mappings
+#+AUTHOR: Warren Read
+#+STARTUP: showall indent
+#+OPTIONS: num:nil toc:nil
+
+
+EFO to MeSH term mapping scripts from SPOT at EBI.
+
+#+TOC: headlines 
+
+* Overview
+
+This project is an attempt to bring together EFO terms stored in the GWAS
+catalogue, with equivalent terms from MeSH, and potentially other external
+ontologies too. At its core is a small set of Python scripts using the OxO and
+OLS APIs to find (respectively) X-refs, and lexical similarity between term
+labels. Ultimately we want to enhance the curation tools, offering curators the
+ability to select appropriate MeSH terms with which to enrich entries in the
+GWAS catalogue.
+
+* Installation
+
+The initial release of this software comprises 5 files: 4 Python scripts
+(including two --- ~grab_gwas.py~ and ~spotilities.py~ --- serving as modules)
+and an additional configuration file. The full file list is:
+
+#+BEGIN_SRC bash -n
+grab_gwas.py
+spotilities.py
+ols_blaster.py
+oxonator2.py
+oxoconfig.ini
+#+END_SRC
+
+Create a new directory, set default to it, and check out all files in this
+project. You will need Python 3 with virtualenv: read the Dependencies section
+below for full details.
+
+* Function
+
+The two principal scripts to run are ~ols_blaster.py~ and ~oxonator2.py~. The
+former returns MeSH hits from the OLS API, based on text matching to EFO label;
+the latter returns Mesh hits from the OxO API, based on xrefs. Output in both
+cases is in tsv format.
+
+* Dependencies
+
+The scripts are written in Python 3, and expect to be invoked with the
+appropriate command---e.g.:
+
+#+BEGIN_SRC bash
+$ python3 scriptname.py
+#+END_SRC
+
+... although they are all configured with the appropriate shebangs, so you can
+of course simply enable execution rights on the scripts and invoke them with:
+
+#+BEGIN_SRC bash
+$ ./scriptname.py
+#+END_SRC
+
+There are further dependencies on a couple of packages, which do not come as
+default with a standard Python 3 installation. Therefore, you need to add the
+following packages:
+
+#+BEGIN_SRC python -n
+requests
+configparser
+#+END_SRC
+
+You may---and probably should---do this within a /virtual environment/; the
+~virtualenv~ package itself may come pre-installed with Python 3, but you can
+check for all such pre-installed system-wide packages using the default package
+manager (pip3) by entering:
+
+#+BEGIN_SRC bash
+$ pip3 list
+#+END_SRC
+
+If ~virtualenv~ is absent, install it (system-wide) using the following command:
+
+#+BEGIN_SRC bash
+$ sudo pip3 install virtualenv
+#+END_SRC
+
+You will then be able to set up local, virtual spaces in which any add-on
+packages to Python can be retained at stable version nubers which are known to
+work with the existing code base. If, for example, you want to create a virtual
+space called "~myvirtenv~", enter (from the directory in which you have chosen
+to store your virtual environments):
+
+#+BEGIN_SRC bash
+$ virtualenv myvirtenv
+#+END_SRC
+
+This will create a ~./myvirtenv~ subdirectory beneath the default directory
+where the command was executed; the subdirectory itself contains furhter
+subdirectories, including ~./myvirtenv/bin~, wherein lies a script called
+"~activate~"; to activate the virtual environment therefore, you need to enter:
+
+#+BEGIN_SRC bash
+$ ./myvirtenv/bin/activate
+#+END_SRC
+
+Thereafter, when you run any Python 3 script, or type any pip3 command, it will
+execute in the context of your active virtual environment, /not/ the system-wide
+(default) Python 3 environment. This applies to the installation of Python 3
+packages too, which are now installed locally (within the virtual
+environment)---including the ~pip3~ package. (There is no point in installing
+~virtualenv~ itself within a virtual environment.) Of course, this means that a
+single user can implement multiple virtual environments! To deactivate a current
+Python 3 virtual environment and return to the system default packages, simply
+type:
+
+#+BEGIN_SRC bash
+$ deactivate
+#+END_SRC
+
+In regard to EFO->MeSH mappings, you will probably want to run them within a
+virtual environment, where you can install the necessary dependencies without
+affecting any other code. For the present, once you have activated your virtual
+environment, you can simply install the requisite packages thus:
+
+#+BEGIN_SRC bash
+$ pip3 install requests
+$ pip3 install configparser
+#+END_SRC
+
+Within the same environment, you are now ready to run the scripts themselves.
+~oxonator2.py~ depends on ~grab_gwas.py~, ~spotilities.py~ and ~oxoconfig.ini~,
+while ~ols_blaster.py~ currently depends only on the two modules, but not the
+~ini~ file. All need to be in the current default direcory; ensure that you have
+set execute privs on all 4 ~.py~ scripts by entering:
+
+#+BEGIN_SRC bash
+$ chmod a+x *.py
+#+END_SRC
+
+* Usage
+
+With all dependencies in place, invoke the aforementioned two main scripts
+respectively with:
+
+#+BEGIN_SRC bash
+$ ./oxonator2.py oxoconfig.ini
+$ ./ols_blaster.py
+#+END_SRC

@@ -63,11 +63,9 @@ for efoId in traits:
         if "synonym" in hit:
             for each_synonym in hit["synonym"]:
                 print("\t".join((efoId, efoLabel, traits[efoId], hit["id"], hit["iri"], hit["label"], each_synonym, "%f" % (hit["score"]))))
-                # print("\t".join((efoId, efoLabel, traits[efoId], hit["id"], hit["iri"], hit["label"], each_synonym, hit["score"])))
                 # synonym_count += 1
         else:
             print("\t".join((efoId, efoLabel, traits[efoId], hit["id"], hit["iri"], hit["label"], "", "%f" % (hit["score"]))))
-            # print("\t".join((efoId, efoLabel, traits[efoId], hit["id"], hit["iri"], hit["label"], "", hit["score"])))
         # print()
     # spot.newsflash(efoLabel)
     # input("\nPress any key to continue ...\n")

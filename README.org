@@ -8,7 +8,7 @@ EFO to MeSH term mapping scripts from SPOT at EBI.
 
 #+TOC: headlines 
 
-* Overview
+** Overview
 
 This project is an attempt to bring together EFO terms stored in the GWAS
 catalogue, with equivalent terms from MeSH, and potentially other external
@@ -18,7 +18,7 @@ labels. Ultimately we want to enhance the curation tools, offering curators the
 ability to select appropriate MeSH terms with which to enrich entries in the
 GWAS catalogue.
 
-* Installation
+** Installation
 
 The initial release of this software comprises 5 files: 4 Python scripts
 (including two --- ~grab_gwas.py~ and ~spotilities.py~ --- serving as modules)
@@ -36,14 +36,14 @@ Create a new directory, set default to it, and check out all files in this
 project. You will need Python 3 with virtualenv: read the Dependencies section
 below for full details.
 
-* Function
+** Function
 
 The two principal scripts to run are ~ols_blaster.py~ and ~oxonator2.py~. The
 former returns MeSH hits from the OLS API, based on text matching to EFO label;
 the latter returns Mesh hits from the OxO API, based on xrefs. Output in both
 cases is in tsv format.
 
-* Dependencies
+** Dependencies
 
 The scripts are written in Python 3, and expect to be invoked with the
 appropriate command---e.g.:
@@ -136,7 +136,7 @@ set execute privs on all 4 ~.py~ scripts by entering:
 $ chmod a+x *.py
 #+END_SRC
 
-* Usage
+** Usage
 
 With all dependencies in place, invoke the aforementioned two main scripts
 respectively with:

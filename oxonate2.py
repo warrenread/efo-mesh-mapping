@@ -42,7 +42,7 @@ def loadMapping(mapperDict, efoId, efoLabel, meshId, meshLabel, steps, confidenc
 
 
 #
-# Start with: ./oxonate2.py oxoconfig.ini
+#  Start with: ./oxonate2.py oxoconfig.ini
 #
 
 # Check that we have 2 input parameters
@@ -72,11 +72,21 @@ else:
     for dis in range(1, 4):                   # From 1 to 3
         disString = "%d" % dis 
         data["distance"] = disString
-        reply = apiCall(url, data)            # Execute API call with url and data
-        jsonContent = reply.content
-        jsonString = json.loads(jsonContent)
-        jsonStrings.append(jsonString)
-        # print(json.dumps(jsonString))
+        linkUrl = url
+        print("About to loop ...")
+        while linkUrl is not None:
+            print("Issuing API call to %s ..." % (linkUrl))
+            reply = apiCall(linkUrl, data)        # Execute API call with url and data
+            jsonContent = reply.content
+            jsonString = json.loads(jsonContent)
+            jsonStrings.append(jsonString)
+            # print(json.dumps(jsonString))
+            print("Getting next link ...")
+            try:
+                linkUrl = jsonString["_links"]["next"]["href"]
+            except KeyError:
+                print("Stopped")
+                linkUrl = None
 
     print("No of successful calls to URI (max=3): %d" % (len(jsonStrings)))
     print()

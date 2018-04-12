@@ -7,7 +7,8 @@ import sys                                  # For the imput parameters
 import time                                 # Just to use the sleep methode
 import json
 import csv
-import grab_gwas
+import grab_gwas as gwas
+import spotilities as spot
 
 """ Method to execute API call; do this in a function to catch potential errors """
 def apiCall(url, data):
@@ -48,7 +49,7 @@ def loadMapping(mapperDict, efoId, efoLabel, meshId, meshLabel, steps, confidenc
 # Check that we have 2 input parameters
 if (len(sys.argv)!=2):
     msg = "Incorrect number of parameters: config file required as input parameter"
-    print(msg)
+    spot.newsflash(msg)
 else:
 
     """ Main program code """
@@ -59,13 +60,13 @@ else:
     logging.basicConfig(filename=path_to_validate_log, level=logging.INFO, format='%(asctime)s - %(message)s')
     url = config.get('Params', 'oxoUrl')    # Get url from config
     stepConf = config.get('Params', 'stepConfidence')  # Get confidence per step from config
-    print("Getting traits ...")
-    traits = grab_gwas.get_efo_traits()
-    print("Count of unique EFO traits is %d" % (len(traits)))
-    print("No of keys is %d" % (len(traits.keys())))
-    print()
-    print("Here are the EFO->MeSH X-references from Oxo ...")
-    print()
+    spot.newsflash("Getting traits ...")
+    traits = gwas.get_efo_traits()
+    spot.newsflash("Count of unique EFO traits is %d" % (len(traits)))
+    spot.newsflash("No of keys is %d" % (len(traits.keys())))
+    spot.newsflash()
+    spot.newsflash("Here are the EFO->MeSH X-references from Oxo ...")
+    spot.newsflash()
     data = {"ids":list(traits.keys()),"mappingTarget":["MeSH"]}
 
     jsonStrings = []
@@ -73,33 +74,31 @@ else:
         disString = "%d" % dis 
         data["distance"] = disString
         linkUrl = url
-        print("About to loop ...")
+        spot.newsflash("About to loop ...")
         while linkUrl is not None:
-            print("Issuing API call to %s ..." % (linkUrl))
+            spot.newsflash("Issuing API call to %s ..." % (linkUrl))
             reply = apiCall(linkUrl, data)        # Execute API call with url and data
             jsonContent = reply.content
             jsonString = json.loads(jsonContent)
             jsonStrings.append(jsonString)
             # print(json.dumps(jsonString))
-            print("Getting next link ...")
+            spot.newsflash("Getting next link ...")
             try:
                 linkUrl = jsonString["_links"]["next"]["href"]
             except KeyError:
-                print("Stopped")
+                spot.newsflash("Stopped")
                 linkUrl = None
 
-    print("No of successful calls to URI (max=3): %d" % (len(jsonStrings)))
-    print()
+    spot.newsflash("No of successful calls to URI (max=3): %d" % (len(jsonStrings)))
+    spot.newsflash()
     meshDict = {}
     cnt = 1
     allResCnt = 0
     for eachString in jsonStrings:  # I.e. each distance: 1 to 3
         subJson = eachString["_embedded"]["searchResults"]
         for res in subJson:
-            # print("ok")
             for mappingFound in res["mappingResponseList"]:
                 # print("EFO ID: %s; distance: %d; MeSH ID: %s" % (res["queryId"], cnt, mappingFound["curie"]))
-                # print("ok")
                 loadMapping(
                         meshDict,
                         res["queryId"],
@@ -111,8 +110,8 @@ else:
                 # print("EFO id: %s; MeSH id: %s" % (res["queryId"], mappingFound["curie"]))
                 allResCnt += 1
         cnt += 1
-    print("Total MeSH terms at distances 1-3: %d" % (allResCnt))
-    print()
+    spot.newsflash("Total MeSH terms at distances 1-3: %d" % (allResCnt))
+    spot.newsflash()
 
     # print()
     # print(json.dumps(meshDict))
@@ -128,5 +127,6 @@ else:
             outFields.append(meshTarget["meshLabel"])
             print("\t".join(outFields))
         # print("Query term: %s" % efoSource)
-    print()
-    # print("Ok, we're done.")
+    """ Messages below scramble terminal output if not redirecting or piping. """
+    # spot.newsflash()
+    # spot.newsflash("Ok, we're done.")
